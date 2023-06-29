@@ -3,6 +3,10 @@ import { fetchCatByBreed } from './js/cat-api';
 import { renderBreedsSelect } from './js/render';
 import { renderInfoByCat } from './js/render';
 
+import SlimSelect from 'slim-select';
+import 'slim-select/dist/slimselect.css';
+import Notiflix from 'notiflix';
+
 const selectBreed = document.querySelector('.breed-select');
 const catInfoContainer = document.querySelector('.cat-info');
 const loaderTextEl = document.querySelector('.loader');
@@ -14,11 +18,16 @@ loaderTextEl.hidden = false;
 fetchBreeds()
   .then(data => {
     selectBreed.insertAdjacentHTML('beforeend', renderBreedsSelect(data));
+    new SlimSelect({
+      select: '#single',
+    });
     selectBreed.hidden = false;
     loaderTextEl.hidden = true;
   })
   .catch(err => {
-    errorTextEl.hidden = false;
+    Notiflix.Notify.failure(
+      'Oops! Something went wrong! Try reloading the page!'
+    );
     loaderTextEl.hidden = true;
   });
 
@@ -26,7 +35,6 @@ selectBreed.addEventListener('change', onChangeSelect);
 
 function onChangeSelect(evt) {
   loaderTextEl.hidden = false;
-  errorTextEl.hidden = true;
 
   const selectedBreedId = evt.target.value;
 
@@ -38,9 +46,9 @@ function onChangeSelect(evt) {
       loaderTextEl.hidden = true;
     })
     .catch(err => {
-      errorTextEl.hidden = false;
-      if (!errorTextEl.hidden) {
-        loaderTextEl.hidden = true;
-      }
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!'
+      );
+      loaderTextEl.hidden = true;
     });
 }
